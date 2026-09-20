@@ -1,3 +1,5 @@
+<img src="assets/liberty.png"/>
+
 # Liberty Web
 
 [![Gem Version](https://badge.fury.io/rb/liberty-web.svg)](https://badge.fury.io/rb/liberty-web)
