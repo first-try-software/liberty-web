@@ -3,7 +3,7 @@
 # Liberty Web
 
 [![Gem Version](https://badge.fury.io/rb/liberty-web.svg)](https://badge.fury.io/rb/liberty-web)
-[![Ruby](https://github.com/first-try-software/liberty-web/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/first-try-software/liberty-web/actions/workflows/main.yml)
+[![CI](https://github.com/first-try-software/liberty-web/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/first-try-software/liberty-web/actions/workflows/main.yml)
 
 Liberty Web is the browser stack for a [Liberty](https://github.com/first-try-software/liberty) application: sessions, CSRF, host and origin checks, security headers, a redirect challenge, and a seam for the application's renderer.
 
