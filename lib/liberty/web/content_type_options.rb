@@ -6,8 +6,6 @@ module Liberty
     # half of rack-protection's XSSHeader; the other half, x-xss-protection,
     # is obsolete and is not sent.
     class ContentTypeOptions
-      HEADER = "x-content-type-options"
-
       attr_reader :app
 
       def initialize(app)
@@ -16,7 +14,7 @@ module Liberty
 
       def call(env)
         status, headers, body = app.call(env)
-        headers[HEADER] ||= "nosniff"
+        headers["x-content-type-options"] ||= "nosniff"
         [status, headers, body]
       end
     end

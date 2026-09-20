@@ -4,9 +4,9 @@ require "rack/protection"
 
 module Liberty
   module Web
-    # A Liberty endpoint with what a browser endpoint reaches for. Four private
-    # helpers and nothing else: no lifecycle, no response object, and no
-    # opinion about how the renderer is called.
+    # A Liberty endpoint with what a browser endpoint reaches for. Three
+    # private helpers and nothing else: no lifecycle, no response object, and
+    # nothing about templates, which are the application's.
     class Endpoint < Liberty::Endpoint
       private
 
@@ -25,11 +25,6 @@ module Liberty
       # The headers of a redirect. The status stays the endpoint's own answer.
       def location(path)
         {"location" => path}
-      end
-
-      # The object the Config was built with, called however that object is called.
-      def renderer
-        Liberty::Web.renderer
       end
     end
   end

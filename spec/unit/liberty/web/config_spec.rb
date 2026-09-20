@@ -2,20 +2,14 @@
 
 RSpec.describe Liberty::Web::Config do
   def complete(**overrides)
-    described_class.new(
-      session_secrets: ["s" * 64],
-      permitted_hosts: ["example.org"],
-      secure_cookies: false,
-      renderer: Object.new,
-      **overrides
-    )
+    described_class.new(session_secrets: ["s" * 64], permitted_hosts: ["example.org"], secure_cookies: false, **overrides)
   end
 
   describe ".new" do
     it "never raises, even with nothing given" do
       config = described_class.new
 
-      expect(config.errors.size).to eq(4)
+      expect(config.errors.size).to eq(3)
     end
 
     it "wraps one secret and one host in arrays" do
@@ -62,12 +56,6 @@ RSpec.describe Liberty::Web::Config do
       expect(config.errors).to eq(["secure_cookies must be true or false"])
     end
 
-    it "names a missing renderer" do
-      config = complete(renderer: nil)
-
-      expect(config.errors).to eq(["renderer must be set"])
-    end
-
     it "names a static root that is not a directory" do
       config = complete(static: "/nowhere/public")
 
@@ -87,7 +75,7 @@ RSpec.describe Liberty::Web::Config do
     end
 
     it "is false with any" do
-      expect(complete(renderer: nil).valid?).to be(false)
+      expect(complete(secure_cookies: nil).valid?).to be(false)
     end
   end
 end

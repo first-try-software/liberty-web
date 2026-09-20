@@ -6,8 +6,7 @@ module Liberty
     # application can rescue the framework as a whole.
     Error = Class.new(Liberty::Error)
 
-    # Raised by Liberty::Web.app for a Config with errors, and by an endpoint
-    # that reaches for the renderer before any stack has been built.
+    # Raised by Liberty::Web.app for a Config with errors.
     ConfigurationError = Class.new(Error)
   end
 end

@@ -12,10 +12,6 @@ RSpec.describe Liberty::Web::Endpoint do
     status
   end
 
-  def config_with(renderer)
-    Liberty::Web::Config.new(session_secrets: ["s" * 64], permitted_hosts: ["example.org"], secure_cookies: false, renderer: renderer)
-  end
-
   it "is a Liberty endpoint" do
     expect(described_class.superclass).to be(Liberty::Endpoint)
   end
@@ -55,31 +51,6 @@ RSpec.describe Liberty::Web::Endpoint do
       endpoint = build(endpoint_class)
 
       expect(endpoint.headers).to eq({"location" => "/journal"})
-    end
-  end
-
-  describe "#renderer" do
-    it "is the renderer the stack was built with" do
-      renderer = Object.new
-      Liberty::Web.app(config_with(renderer))
-      endpoint_class = Class.new(described_class) do
-        def json = renderer
-      end
-
-      endpoint = build(endpoint_class)
-
-      expect(endpoint.json).to be(renderer)
-    end
-
-    it "explains itself when no stack has been built" do
-      Liberty::Web.instance_variable_set(:@config, nil) # the only way to be unbuilt once another spec has built
-      endpoint_class = Class.new(described_class) do
-        def json = renderer
-      end
-
-      endpoint = build(endpoint_class)
-
-      expect { endpoint.json }.to raise_error(Liberty::Web::ConfigurationError, /Liberty::Web\.app/)
     end
   end
 end

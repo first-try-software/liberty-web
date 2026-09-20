@@ -7,7 +7,7 @@ Liberty Web is the browser stack for a [Liberty](https://github.com/first-try-so
 
 Liberty itself answers requests and decides who is asking, and it stays free of cookies and templates so an API never carries them. Liberty Web adds what a browser needs, in one explicit call, and no more. It owns the shape of its configuration and the order of its middleware. The application owns every value, its authenticators, its templates, and its data.
 
-Two things Liberty Web does not do, on purpose. It ships no template engine: the application hands it a renderer and calls that object however it likes. And it reads no environment: the application reads its own settings and fills in a `Config`.
+Two things Liberty Web does not do, on purpose. It has nothing to say about templates: an endpoint calls whatever renderer the application owns, and the gem never sees it. And it reads no environment: the application reads its own settings and fills in a `Config`.
 
 ## Usage
 
@@ -23,7 +23,6 @@ config = Liberty::Web::Config.new(
   session_secrets: [ENV.fetch("SESSION_SECRET")],   # one or more strings of at least 64 bytes; more than one rotates
   permitted_hosts: ENV.fetch("PERMITTED_HOSTS").split(","),
   secure_cookies: ENV["RACK_ENV"] == "production",  # true needs the proxy to forward the scheme; see below
-  renderer: MyApp.renderer,                         # the object endpoints reach as `renderer`
   static: "public"                                  # optional: a directory whose top-level entries become urls
 )
 
@@ -50,13 +49,12 @@ To add middleware of your own, wrap the result in your own `Rack::Builder`.
 
 ### Endpoints
 
-Inherit from `Liberty::Web::Endpoint` instead of `Liberty::Endpoint`. It adds four private helpers and nothing else:
+Inherit from `Liberty::Web::Endpoint` instead of `Liberty::Endpoint`. It adds three private helpers and nothing else:
 
 ```ruby
 session          # the rack session hash; wrap it in your own class if you want a vocabulary
 csrf_token       # the token the CSRF middleware accepts for this session, for a hidden field or a meta tag
 location(path)   # {"location" => path}; the status stays your own answer
-renderer         # the object the Config was built with, called however that object is called
 ```
 
 ```ruby
@@ -64,7 +62,7 @@ class Journal < Liberty::Web::Endpoint
   responds_to :get, "/", authenticated_by: Authenticators::Session
 
   def html
-    renderer.render("journal", layout: :application, csrf_token: csrf_token, notes: notes)
+    MyApp.renderer.render("journal", layout: :application, csrf_token: csrf_token, notes: notes)
   end
 end
 

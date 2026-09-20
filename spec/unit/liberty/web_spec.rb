@@ -11,27 +11,16 @@ RSpec.describe Liberty::Web do
 
       expect { described_class.app(config) }.to raise_error(Liberty::Web::ConfigurationError) do |error|
         expect(error).to be_a(Liberty::Error)
-        expect(error.message).to include("session_secrets", "permitted_hosts", "secure_cookies", "renderer")
+        expect(error.message).to include("session_secrets", "permitted_hosts", "secure_cookies")
       end
     end
 
     it "returns a Rack application for a complete config" do
-      config = Liberty::Web::Config.new(session_secrets: ["s" * 64], permitted_hosts: ["example.org"], secure_cookies: false, renderer: Object.new)
+      config = Liberty::Web::Config.new(session_secrets: ["s" * 64], permitted_hosts: ["example.org"], secure_cookies: false)
 
       app = described_class.app(config)
 
       expect(app).to respond_to(:call)
-    end
-  end
-
-  describe ".renderer" do
-    it "is the renderer of the config the stack was built with" do
-      renderer = Object.new
-      config = Liberty::Web::Config.new(session_secrets: ["s" * 64], permitted_hosts: ["example.org"], secure_cookies: false, renderer: renderer)
-
-      described_class.app(config)
-
-      expect(described_class.renderer).to be(renderer)
     end
   end
 end

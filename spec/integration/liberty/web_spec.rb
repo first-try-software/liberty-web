@@ -10,12 +10,6 @@ RSpec.describe Liberty::Web do
 
   def public_dir = File.expand_path("../../fixtures/public", __dir__)
 
-  def renderer
-    Object.new.tap do |renderer|
-      renderer.define_singleton_method(:render) { |template, **locals| "#{template}: Hello, #{locals[:name]}" }
-    end
-  end
-
   Class.new(Liberty::Web::Endpoint) do
     responds_to :get, "/web/form", authenticated_by: Liberty::Authenticators::Public
 
@@ -51,12 +45,6 @@ RSpec.describe Liberty::Web do
     def text = session["seen"].to_s
   end
 
-  Class.new(Liberty::Web::Endpoint) do
-    responds_to :get, "/web/page", authenticated_by: Liberty::Authenticators::Public
-
-    def html = renderer.render("page", name: "Alan")
-  end
-
   redirecting = Class.new(Liberty::Authenticator) do
     def principal = nil
 
@@ -71,7 +59,7 @@ RSpec.describe Liberty::Web do
 
   def build(**overrides)
     config = Liberty::Web::Config.new(
-      session_secrets: [secret], permitted_hosts: ["example.org"], secure_cookies: false, renderer: renderer, static: public_dir,
+      session_secrets: [secret], permitted_hosts: ["example.org"], secure_cookies: false, static: public_dir,
       **overrides
     )
     Liberty::Web::Testing.lint(Liberty::Web.app(config))
@@ -170,12 +158,6 @@ RSpec.describe Liberty::Web do
 
     expect(log.string).to include("attack prevented by Rack::Protection::HostAuthorization")
     expect(errors.string).to eq("")
-  end
-
-  it "renders through the injected renderer" do
-    get "/web/page", {}, {"HTTP_ACCEPT" => "text/html"}
-
-    expect(last_response.body).to eq("page: Hello, Alan")
   end
 
   it "answers a challenge from Redirect.to" do
